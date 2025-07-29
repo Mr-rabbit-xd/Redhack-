@@ -1,0 +1,161 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>X-AP NOVA APEX</title>
+  <link href="https://fonts.googleapis.com/css2?family=Orbitron&display=swap" rel="stylesheet">
+</head>
+<body style="margin:0; padding:0; background:black; font-family:'Orbitron',sans-serif; color:#ff0033; overflow:hidden;">
+
+  <canvas id="bgCanvas" style="position:fixed;top:0;left:0;z-index:0;"></canvas>
+
+  <div style="position:relative;z-index:2;max-width:400px;margin:100px auto;padding:30px 20px;background:rgba(0,0,0,0.8);border-radius:15px;box-shadow:0 0 30px #ff003355;">
+    
+    <div style="text-align:center;margin-bottom:20px;">
+      <img src="https://files.catbox.moe/1jpaf2.png" alt="Logo" style="width:110px;filter:drop-shadow(0 0 15px #ff0033);">
+    </div>
+
+    <h1 style="text-align:center;font-size:22px;margin-bottom:20px;color:#ff0033;text-shadow:0 0 5px #ff0033, 0 0 10px #ff0033, 0 0 20px #ff0033;">X-AP NOVA APEX</h1>
+
+    <!-- Game Name (auto-filled by selection) -->
+    <input id="gameName" type="text" placeholder="Game Name" readonly onclick="showGamePopup()" style="width:100%;padding:12px;margin:10px 0;background:#111;border:1px solid #ff0033;border-radius:8px;color:#ff0033;box-shadow:0 0 10px #ff0033;text-shadow:0 0 3px #ff0033;cursor:pointer;" />
+    
+    <input id="gameMode" type="text" placeholder="Game Mode" readonly style="width:100%;padding:12px;margin:10px 0;background:#111;border:1px solid #ff0033;border-radius:8px;color:#ff0033;box-shadow:0 0 10px #ff0033;text-shadow:0 0 3px #ff0033;" />
+    
+    <input id="gameVersion" type="text" placeholder="Game Version" readonly style="width:100%;padding:12px;margin:10px 0;background:#111;border:1px solid #ff0033;border-radius:8px;color:#ff0033;box-shadow:0 0 10px #ff0033;text-shadow:0 0 3px #ff0033;" />
+    
+    <input id="gameUID" type="text" placeholder="Game UID" style="width:100%;padding:12px;margin:10px 0;background:#111;border:1px solid #ff0033;border-radius:8px;color:#ff0033;box-shadow:0 0 10px #ff0033;text-shadow:0 0 3px #ff0033;" />
+    
+    <input id="gameKey" type="text" placeholder="Paid Key" style="width:100%;padding:12px;margin:10px 0;background:#111;border:1px solid #ff0033;border-radius:8px;color:#ff0033;box-shadow:0 0 10px #ff0033;text-shadow:0 0 3px #ff0033;" />
+    
+    <button onclick="validateLogin()" style="width:100%;padding:12px;margin-top:15px;background:#ff0033;color:black;font-weight:bold;border:none;border-radius:8px;box-shadow:0 0 20px #ff0033;text-shadow:0 0 2px black;cursor:pointer;">Login</button>
+
+    <div style="text-align:center;font-size:12px;color:#ff0033bb;margin-top:15px;text-shadow:0 0 5px #ff0033;">
+      Mod Application Work In: 91 Club ~ Tiranga ~ Bdg Game
+    </div>
+  </div>
+
+  <!-- Game selection popup -->
+  <div id="gamePopup" style="display:none;position:fixed;bottom:0;left:0;width:100%;height:200px;overflow-x:scroll;background:#111;border-top:2px solid #ff0033;z-index:10;white-space:nowrap;padding:10px;">
+  </div>
+
+  <script src="uid.js"></script>
+  <script src="key.js"></script>
+
+  <script>
+    const canvas = document.getElementById("bgCanvas");
+    const ctx = canvas.getContext("2d");
+
+    let w = canvas.width = window.innerWidth;
+    let h = canvas.height = window.innerHeight;
+
+    let dots = [];
+    const maxDots = 80;
+    const maxDistance = 150;
+
+    for (let i = 0; i < maxDots; i++) {
+      dots.push({
+        x: Math.random() * w,
+        y: Math.random() * h,
+        vx: (Math.random() - 0.5) * 1,
+        vy: (Math.random() - 0.5) * 1
+      });
+    }
+
+    function draw() {
+      ctx.clearRect(0, 0, w, h);
+      for (let i = 0; i < maxDots; i++) {
+        let dot = dots[i];
+        dot.x += dot.vx;
+        dot.y += dot.vy;
+
+        if (dot.x < 0 || dot.x > w) dot.vx *= -1;
+        if (dot.y < 0 || dot.y > h) dot.vy *= -1;
+
+        ctx.beginPath();
+        ctx.arc(dot.x, dot.y, 2, 0, Math.PI * 2);
+        ctx.fillStyle = "#ff0033";
+        ctx.fill();
+      }
+
+      for (let i = 0; i < maxDots; i++) {
+        for (let j = i + 1; j < maxDots; j++) {
+          let dx = dots[i].x - dots[j].x;
+          let dy = dots[i].y - dots[j].y;
+          let dist = Math.sqrt(dx * dx + dy * dy);
+
+          if (dist < maxDistance) {
+            ctx.beginPath();
+            ctx.moveTo(dots[i].x, dots[i].y);
+            ctx.lineTo(dots[j].x, dots[j].y);
+            ctx.strokeStyle = "rgba(255, 0, 51," + (1 - dist / maxDistance) + ")";
+            ctx.stroke();
+          }
+        }
+      }
+
+      requestAnimationFrame(draw);
+    }
+
+    draw();
+
+    window.addEventListener("resize", () => {
+      w = canvas.width = window.innerWidth;
+      h = canvas.height = window.innerHeight;
+    });
+
+    // Game list
+    const games = [
+      { name: "Free Fire", img: "https://files.catbox.moe/1jpaf2.png", mode: "WINGO", version: "2025FF" },
+      { name: "PUBG Mobile", img: "https://files.catbox.moe/1jpaf2.png", mode: "WINGO", version: "2025PUBG" },
+      { name: "Call of Duty", img: "https://files.catbox.moe/1jpaf2.png", mode: "WINGO", version: "2025COD" }
+    ];
+
+    function showGamePopup() {
+      const popup = document.getElementById("gamePopup");
+      popup.innerHTML = '';
+      popup.style.display = 'block';
+
+      games.forEach(game => {
+        const div = document.createElement("div");
+        div.style.display = "inline-block";
+        div.style.marginRight = "10px";
+        div.style.cursor = "pointer";
+
+        div.innerHTML = `
+          <img src="${game.img}" style="width:100px;height:100px;border-radius:10px;box-shadow:0 0 10px #ff0033;"><br>
+          <span style="color:#ff0033;text-shadow:0 0 5px #ff0033;">${game.name}</span>
+        `;
+
+        div.onclick = () => {
+          document.getElementById("gameName").value = game.name;
+          document.getElementById("gameMode").value = game.mode;
+          document.getElementById("gameVersion").value = game.version;
+          popup.style.display = "none";
+        };
+
+        popup.appendChild(div);
+      });
+    }
+
+    function validateLogin() {
+      const uid = document.getElementById("gameUID").value.trim();
+      const key = document.getElementById("gameKey").value.trim();
+
+      if (!validUIDs.includes(uid)) {
+        alert("❌ Check UID");
+        return;
+      }
+
+      if (!validKeys.includes(key)) {
+        alert("❌ Check Key");
+        return;
+      }
+
+      alert("✅ Login Successful!");
+    }
+  </script>
+
+</body>
+</html>
